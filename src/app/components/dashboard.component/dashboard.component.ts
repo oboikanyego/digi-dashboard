@@ -1,0 +1,66 @@
+import { Component, inject, OnInit, signal } from '@angular/core';
+import { ColDef, themeAlpine } from 'ag-grid-community';
+import { WorkOrder } from '../../models/workorders';
+import { WorkOrderService } from '../../services/work-order.service';
+import { CommonModule } from '@angular/common';
+import { AgGridAngular } from 'ag-grid-angular';
+
+@Component({
+  imports: [CommonModule, AgGridAngular],
+  selector: 'app-dashboard.component',
+  styleUrl: './dashboard.component.scss',
+  templateUrl: './dashboard.component.html',
+})
+export class DashboardComponent implements OnInit {
+  private workOrderService = inject(WorkOrderService);
+  
+  workOrders: WorkOrder[] = [];
+  loading = true;
+  readonly theme = themeAlpine;
+  // 1. Column settings mapping to your data structure
+  public columnDefs: ColDef<WorkOrder>[] = [
+    { field: 'id', headerName: 'Work Order ID', checkboxSelection: true },
+    { field: 'site', headerName: 'Site Location', filter: true },
+    { field: 'region', headerName: 'Region', width: 120 },
+    { field: 'status', headerName: 'Status', sortable: true },
+    { field: 'priority', headerName: 'Priority Level', width: 140 },
+    { field: 'owner', headerName: 'Assigned Owner' },
+    { 
+      field: 'progressPct', 
+      headerName: 'Progress',
+      valueFormatter: params => params.value !== undefined ? `${params.value}%` : '0%'
+    },
+    { 
+      field: 'slaDueAt', 
+      headerName: 'SLA Due Date',
+      valueFormatter: params => params.value ? new Date(params.value).toLocaleDateString() : ''
+    }
+  ];
+
+  // 2. Feed your schema array directly into rowData
+  readonly rowData = signal<WorkOrder[]>([]);
+
+  // 3. Global grid behaviors for professional B2B tables
+  public defaultColDef: ColDef = {
+    flex: 1,
+    minWidth: 100,
+    resizable: true,
+    sortable: true
+  };
+
+
+  ngOnInit() {
+    this.workOrderService.getWorkOrders().subscribe({
+      next: (data) => {
+        this.workOrders = data;
+        this.loading = false;
+        this.rowData.set(data);
+        console.log('✅ Mock Data Loaded successfully:', data);
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('❌ Mock API Failed:', err);
+      }
+    });
+  }
+}
