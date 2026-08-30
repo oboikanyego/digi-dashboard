@@ -1,0 +1,175 @@
+:host {
+  display: block;
+  color: #172033;
+  background: #f4f7fb;
+  min-height: 100vh;
+}
+
+.dashboard-shell {
+  width: min(1200px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
+
+.dashboard-header,
+.metrics,
+.toolbar,
+.table-card,
+.update-card {
+  margin-bottom: 20px;
+}
+
+.dashboard-header h1,
+.update-card h2 {
+  margin: 4px 0 6px;
+}
+
+.eyebrow {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.subtle,
+.update-card p {
+  margin: 0;
+  color: #5d6678;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  gap: 16px;
+}
+
+.metric-card,
+.toolbar,
+.table-card,
+.update-card {
+  background: #fff;
+  border: 1px solid #dce3ed;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(26, 39, 68, 0.06);
+}
+
+.metric-card {
+  padding: 18px;
+}
+
+.metric-card span {
+  display: block;
+  color: #687386;
+  font-size: 0.9rem;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.8rem;
+}
+
+.toolbar {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.toolbar input,
+.update-card select,
+.update-card textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #cfd7e4;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.toolbar small,
+.failure-hint {
+  color: #6a7280;
+}
+
+.table-card {
+  overflow: hidden;
+  padding: 12px;
+}
+
+.update-card {
+  padding: 20px;
+}
+
+.update-card__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.current-status {
+  border-radius: 999px;
+  background: #eef3ff;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.update-card form {
+  display: grid;
+  gap: 10px;
+}
+
+.update-card label {
+  font-weight: 600;
+}
+
+.update-card label span {
+  color: #7b8493;
+  font-size: 0.85rem;
+  font-weight: 400;
+}
+
+.update-card button {
+  width: fit-content;
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.update-card button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.message {
+  padding: 12px 14px;
+  border-radius: 8px;
+}
+
+.error {
+  background: #fff0f0;
+}
+
+.success {
+  background: #effaf3;
+}
+
+.failure-hint {
+  margin-top: 14px !important;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .update-card__heading {
+    flex-direction: column;
+  }
+}
