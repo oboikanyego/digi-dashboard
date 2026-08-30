@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Service } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WorkOrder } from '../models/workorders';
 
-@Service()
+@Injectable({ providedIn: 'root' })
 export class WorkOrderService {
-  private http = inject(HttpClient);
-  private apiUrl = '/api/work-orders';
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = '/api/work-orders';
 
   getWorkOrders(): Observable<WorkOrder[]> {
     return this.http.get<WorkOrder[]>(this.apiUrl);
