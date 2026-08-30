@@ -146,18 +146,12 @@ The brief allows choosing the local API shape. PUT was used for simplicity becau
 
 ## AI usage
 
-AI was used as a development support and review tool for the assessment. It helped with:
+AI was used as an active pair-programming and review tool during the assignment. I used it to understand the brief, validate design choices, review the repository against the acceptance criteria, and help generate/refine parts of the implementation such as the status-update flow, mock failure path, tests and documentation.
 
-- validating the boundary between Angular Signals and RxJS
-- reviewing options for an offline REST-style mock API
-- checking focused unit-test approaches
-- reviewing architecture and documentation for unnecessary complexity
+Representative prompts/instructions from the working session included:
 
-Example prompts used during the work included:
+1. `Please guide me through on how to build this project from start to finish and what are the checkpoints, what are the takeaways as well, and I'm not sure if this application needs backend according to what I was given.`
+2. `did i complete the requirements? https://github.com/oboikanyego/digi-dashboard`
+3. `add the changes on dev`
 
-1. `For a small Angular dashboard, when should I use Signals versus RxJS for local state, derived values, form input and HTTP calls?`
-2. `What is a simple way to provide an offline REST-style GET and update API in Angular without building a separate backend?`
-3. `What focused Angular HTTP service tests best demonstrate one success and one failure path?`
-4. `Review this small Angular assessment architecture and identify any unnecessary over-engineering.`
-
-The suggestions were reviewed and adapted to the assignment scope. Final implementation and trade-off decisions were based on the requirements and on being able to explain and defend the code in the technical interview.
+I treated the AI output as code-review/pair-programming input rather than as an authority. I reviewed the changes against the assignment requirements, kept the architecture intentionally small, and I am responsible for being able to explain and defend every part of the submitted solution in the technical interview.
