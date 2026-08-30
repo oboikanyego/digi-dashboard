@@ -1,10 +1,39 @@
-<ag-grid-angular
-  style="width: 100%; height: 500px"
-  [pagination]="pagination"
-  [paginationPageSize]="paginationPageSize"
-  [paginationPageSizeSelector]="paginationPageSizeSelector"
-  [theme]="theme"
-  [rowData]="rowData()"
-  [columnDefs]="columnDefs"
-  [defaultColDef]="defaultColDef">
-</ag-grid-angular>
+<h1>Work Orders</h1>
+
+<p>Total work orders: {{ workOrders().length }}</p>
+<p>Overdue work orders: {{ overdueCount() }}</p>
+
+<label for="work-order-filter">Search work orders</label>
+<input
+  #filterInput
+  id="work-order-filter"
+  type="search"
+  placeholder="Search by ID, site, status or owner"
+  (input)="filterText.set(filterInput.value)"
+/>
+
+@if (loading()) {
+  <p>Loading work orders...</p>
+}
+
+@if (error()) {
+  <p role="alert">{{ error() }}</p>
+}
+
+@if (!loading() && !error()) {
+  <ag-grid-angular
+    style="width: 100%; height: 500px"
+    [theme]="theme"
+    [rowData]="filteredWorkOrders()"
+    [columnDefs]="columnDefs"
+    [defaultColDef]="defaultColDef"
+    [pagination]="pagination"
+    [paginationPageSize]="paginationPageSize"
+    [paginationPageSizeSelector]="paginationPageSizeSelector"
+    (rowClicked)="selectedWorkOrder.set($event.data ?? null)"
+  />
+}
+
+@if (selectedWorkOrder(); as order) {
+  <p>Selected work order: {{ order.id }}</p>
+}

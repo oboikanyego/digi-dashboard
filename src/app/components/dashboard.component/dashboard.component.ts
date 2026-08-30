@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit,computed, signal } from '@angular/core';
 import { ColDef, themeAlpine } from 'ag-grid-community';
 import { WorkOrder } from '../../models/workorders';
 import { WorkOrderService } from '../../services/work-order.service';
@@ -19,8 +19,8 @@ export const myTheme = themeQuartz.withParams({
 })
 export class DashboardComponent implements OnInit {
   private workOrderService = inject(WorkOrderService);
-  workOrders: WorkOrder[] = [];
-  loading = true;
+  // workOrders: WorkOrder[] = [];
+  // loading = true;
   readonly theme = myTheme;
   pagination = true;
   paginationPageSize = 10;
@@ -44,9 +44,43 @@ export class DashboardComponent implements OnInit {
       valueFormatter: (params) => (params.value ? new Date(params.value).toLocaleDateString() : ''),
     },
   ];
+readonly workOrders = signal<WorkOrder[]>([]);
+readonly loading = signal(false);
+readonly error = signal<string | null>(null);
+readonly filterText = signal('');
+readonly selectedWorkOrder = signal<WorkOrder | null>(null);
 
-  // 2. Feed your schema array directly into rowData
-  readonly rowData = signal<WorkOrder[]>([]);
+readonly filteredWorkOrders = computed(() => {
+  const query = this.filterText().trim().toLowerCase();
+
+  if (!query) {
+    return this.workOrders();
+  }
+
+  return this.workOrders().filter((order) =>
+    [
+      order.id,
+      order.site,
+      order.region,
+      order.status,
+      order.owner,
+      order.priority,
+    ].some((value) => String(value).toLowerCase().includes(query)),
+  );
+});
+
+readonly overdueCount = computed(() => {
+  const now = Date.now();
+
+  return this.workOrders().filter(
+    (order) =>
+      order.status !== 'Done' &&
+      new Date(order.slaDueAt).getTime() < now,
+  ).length;
+});
+
+  // // 2. Feed your schema array directly into rowData
+  // readonly rowData = signal<WorkOrder[]>([]);
 
   // 3. Global grid behaviors for professional B2B tables
   public defaultColDef: ColDef = {
@@ -56,18 +90,23 @@ export class DashboardComponent implements OnInit {
     sortable: true,
   };
 
-  ngOnInit() {
-    this.workOrderService.getWorkOrders().subscribe({
-      next: (data) => {
-        this.workOrders = data;
-        this.loading = false;
-        this.rowData.set(data);
-        console.log('✅ Mock Data Loaded successfully:', data);
-      },
-      error: (err) => {
-        this.loading = false;
-        console.error('❌ Mock API Failed:', err);
-      },
-    });
-  }
+ngOnInit(): void {
+  this.loadWorkOrders();
+}
+
+private loadWorkOrders(): void {
+  this.loading.set(true);
+  this.error.set(null);
+
+  this.workOrderService.getWorkOrders().subscribe({
+    next: (workOrders) => {
+      this.workOrders.set(workOrders);
+      this.loading.set(false);
+    },
+    error: () => {
+      this.error.set('Unable to load work orders.');
+      this.loading.set(false);
+    },
+  });
+}
 }
