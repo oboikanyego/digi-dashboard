@@ -1,0 +1,102 @@
+<main class="dashboard-shell">
+  <header class="dashboard-header">
+    <div>
+      <h1>Work Orders Dashboard</h1>
+      <p class="subtle">500-row local REST dataset with Signals, RxJS filtering and inline status updates.</p>
+    </div>
+  </header>
+
+  <section class="metrics" aria-label="Dashboard summary">
+    <article class="metric-card">
+      <span>Total work orders</span>
+      <strong>{{ workOrders().length }}</strong>
+    </article>
+    <article class="metric-card">
+      <span>Overdue work orders</span>
+      <strong>{{ overdueCount() }}</strong>
+    </article>
+  </section>
+
+  <section class="toolbar">
+    <label for="work-order-filter">Search work orders</label>
+    <input
+      id="work-order-filter"
+      type="search"
+      placeholder="Search by ID, site, status or owner"
+      [formControl]="searchControl"
+    />
+    <small>{{ filteredWorkOrders().length }} matching work orders</small>
+  </section>
+
+  @if (loading()) {
+    <p class="message">Loading work orders...</p>
+  }
+
+  @if (error()) {
+    <p class="message error" role="alert">{{ error() }}</p>
+  }
+
+  @if (!loading() && !error()) {
+    <section class="table-card">
+      <ag-grid-angular
+        style="width: 100%; height: 500px"
+        [theme]="theme"
+        [rowData]="filteredWorkOrders()"
+        [columnDefs]="columnDefs"
+        [defaultColDef]="defaultColDef"
+        [pagination]="pagination"
+        [paginationPageSize]="paginationPageSize"
+        [paginationPageSizeSelector]="paginationPageSizeSelector"
+        (rowClicked)="selectWorkOrder($event.data ?? null)"
+      />
+    </section>
+  }
+
+  @if (selectedWorkOrder(); as order) {
+    <section class="update-card" aria-labelledby="status-update-title">
+      <div class="update-card__heading">
+        <div>
+          <p class="eyebrow">Selected work order</p>
+          <h2 id="status-update-title">{{ order.id }}</h2>
+          <p>{{ order.site }} · {{ order.owner }}</p>
+        </div>
+        <span class="current-status">Current: {{ order.status }}</span>
+      </div>
+
+      <form [formGroup]="statusForm" (ngSubmit)="submitStatusUpdate()">
+        <label for="status">New status</label>
+        <select id="status" formControlName="status">
+          @for (status of statuses; track status) {
+            <option [value]="status">{{ status }}</option>
+          }
+        </select>
+
+        <label for="note">Note <span>(optional, UI-only for this exercise)</span></label>
+        <textarea
+          id="note"
+          rows="3"
+          formControlName="note"
+          placeholder="Short reason for the update"
+        ></textarea>
+
+        <button type="submit" [disabled]="updating()">
+          {{ updating() ? 'Updating...' : 'Update status' }}
+        </button>
+      </form>
+
+      @if (updateSuccess()) {
+        <p class="message success" role="status">{{ updateSuccess() }}</p>
+      }
+
+      @if (updateError()) {
+        <p class="message error" role="alert">{{ updateError() }}</p>
+      }
+
+      @if (order.id === 'WO-2026-00013') {
+        <p class="failure-hint">
+          Demo note: this record intentionally returns HTTP 500 on update to demonstrate graceful error handling.
+        </p>
+      }
+    </section>
+  }
+</main>
