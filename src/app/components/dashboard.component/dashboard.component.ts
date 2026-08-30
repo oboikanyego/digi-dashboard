@@ -4,6 +4,12 @@ import { WorkOrder } from '../../models/workorders';
 import { WorkOrderService } from '../../services/work-order.service';
 import { CommonModule } from '@angular/common';
 import { AgGridAngular } from 'ag-grid-angular';
+import { themeQuartz, iconSetQuartzLight } from 'ag-grid-community';
+
+// to use myTheme in an application, pass it to the theme grid option
+export const myTheme = themeQuartz.withParams({
+  browserColorScheme: 'light',
+});
 
 @Component({
   imports: [CommonModule, AgGridAngular],
@@ -13,10 +19,12 @@ import { AgGridAngular } from 'ag-grid-angular';
 })
 export class DashboardComponent implements OnInit {
   private workOrderService = inject(WorkOrderService);
-  
   workOrders: WorkOrder[] = [];
   loading = true;
-  readonly theme = themeAlpine;
+  readonly theme = myTheme;
+  pagination = true;
+  paginationPageSize = 10;
+  paginationPageSizeSelector = [10, 25, 50];
   // 1. Column settings mapping to your data structure
   public columnDefs: ColDef<WorkOrder>[] = [
     { field: 'id', headerName: 'Work Order ID', checkboxSelection: true },
@@ -25,16 +33,16 @@ export class DashboardComponent implements OnInit {
     { field: 'status', headerName: 'Status', sortable: true },
     { field: 'priority', headerName: 'Priority Level', width: 140 },
     { field: 'owner', headerName: 'Assigned Owner' },
-    { 
-      field: 'progressPct', 
+    {
+      field: 'progressPct',
       headerName: 'Progress',
-      valueFormatter: params => params.value !== undefined ? `${params.value}%` : '0%'
+      valueFormatter: (params) => (params.value !== undefined ? `${params.value}%` : '0%'),
     },
-    { 
-      field: 'slaDueAt', 
+    {
+      field: 'slaDueAt',
       headerName: 'SLA Due Date',
-      valueFormatter: params => params.value ? new Date(params.value).toLocaleDateString() : ''
-    }
+      valueFormatter: (params) => (params.value ? new Date(params.value).toLocaleDateString() : ''),
+    },
   ];
 
   // 2. Feed your schema array directly into rowData
@@ -45,9 +53,8 @@ export class DashboardComponent implements OnInit {
     flex: 1,
     minWidth: 100,
     resizable: true,
-    sortable: true
+    sortable: true,
   };
-
 
   ngOnInit() {
     this.workOrderService.getWorkOrders().subscribe({
@@ -60,7 +67,7 @@ export class DashboardComponent implements OnInit {
       error: (err) => {
         this.loading = false;
         console.error('❌ Mock API Failed:', err);
-      }
+      },
     });
   }
 }

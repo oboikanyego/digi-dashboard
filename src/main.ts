@@ -3,7 +3,7 @@ import {
   ClientSideRowModelModule,
   ModuleRegistry,
   RowSelectionModule,
-  TextFilterModule,
+  TextFilterModule,PaginationModule 
 } from 'ag-grid-community';
 
 import { appConfig } from './app/app.config';
@@ -13,6 +13,7 @@ ModuleRegistry.registerModules([
   ClientSideRowModelModule,
   RowSelectionModule,
   TextFilterModule,
+  PaginationModule
 ]);
 
 bootstrapApplication(App, appConfig)
